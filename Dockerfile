@@ -1,7 +1,10 @@
 FROM tray/java:8-jre
 
-RUN /usr/bin/curl -L http://dynamodb-local.s3-website-us-west-2.amazonaws.com/dynamodb_local_latest | /bin/tar xz
+RUN /usr/bin/curl -L https://s3-us-west-2.amazonaws.com/dynamodb-local/dynamodb_local_latest.tar.gz | /bin/tar xz
 
-ENTRYPOINT ["/opt/jdk/bin/java", "-Djava.library.path=./DynamoDBLocal_lib", "-jar", "DynamoDBLocal.jar"]
+# Add VOLUME to allow backup of databases
+VOLUME ["/var/dynamodb_local"]
 
-CMD ["-help"]
+ENTRYPOINT ["/opt/jdk/bin/java", "-Djava.library.path=./DynamoDBLocal_lib", "-jar", "DynamoDBLocal.jar", "-dbPath", "/var/dynamodb_local"]
+
+CMD ["-port", "8000"]
